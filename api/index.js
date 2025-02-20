@@ -45,20 +45,61 @@ app.listen(port, () => {
     console.log("server is running on port 8000");
 });
 
+const User = require("./models/user");
+const Order = require("./models/order");
+
+//function to send verification email to the user
+const sendVerificationEmail = async (email, verificationToken) => {
+  //create a nodemailer transporter
+  const transporter = nodemailer.createTransport({
+    //configure the email service
+    service: "gmail",
+    auth: {
+      user: "tempeteekwa1995@gmail.com",
+      pass: "brpd rutj takw zdsn",
+    },
+  });
+
+  //compose the email message
+  const mailOptions = {
+    from: "amazon.com",
+    to: email,
+    subject: "Email Verification",
+    text: `Please click the following link to verify your email : XXXXXXXXXXXXXXXXXXXXXXXXXXXXX${verificationToken}`,
+  };
+
+  //send the email
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.log("error sending email", error);
+  }
+};
+
 // endpoint to register in the app
 app.post("/register", (req, res) => {
-    // Récupération des données d'inscription depuis la requête HTTP
-    const { username, email, password } = req.body;
+   try {
+     const { name, email, password } = req.body;
 
-    // Création d'un nouvel utilisateur dans la base de données
-    const newUser = new User({ username, email, password });
+     //Check if the email is already registered
+     const existingUser = await User.findOne({ email});
+     if (existingUser) {
+       return res.status(400).json({ message: "Email already registered" });
+     }
 
-    // Enregistrement du nouvel utilisateur dans la base de données
-    newUser.save().then(() => {
-        // Si l'enregistrement réussit, envoyer une réponse avec un message de succès
-        res.status(200).json({ message: "User registered successfully" });
-    }).catch((err) => {
-        // Si une erreur survient lors de l'enregistrement, envoyer une réponse avec un message d'erreur
-        res.status(500).json({ message: "Error registering the user!" });
-    });
+     //Create a new user
+     const newUser = new User({name,email,password});
+
+     //Generate and store the verification token
+     newUser.verificationToken = crypto.randomBytes(20).toString("hex");
+
+     // Save the user to the database
+     await newUser.save();
+
+     //Send a verification email to the user
+     sendVerificationEmail(newUser.email, newUser.verificationToken);
+   } catch (error) {
+     console.log("error registering user", error);
+     res.status(500).json({ message: "Registration failed" });
+   } 
 });

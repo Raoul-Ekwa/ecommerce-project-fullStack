@@ -67,7 +67,7 @@ const RegisterScreen = () => {
                
 
                 <View>
-                    <MyButton title="Se connecter"/>
+                    <MyButton title="Enregistrer"/>
                 </View>
 
                 <TouchableOpacity onPress={() => navigation.navigate('Login')}>
