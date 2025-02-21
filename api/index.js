@@ -1,6 +1,6 @@
 // Importation des modules nécessaires
 const express = require('express'); // Framework web pour Node.js
-const bodyParser = require('body-parser'); // Middleware pour parser les corps des requêtes HTTP
+const bodyParser = require('body-parser'); // Middleware pour analyser les corps des requêtes HTTP
 const mongoose = require('mongoose'); // Bibliothèque pour interagir avec MongoDB
 const crypto = require('crypto'); // Module pour les opérations cryptographiques (ex : hachage, chiffrement)
 const nodemailer = require('nodemailer'); // Module pour envoyer des emails depuis Node.js
@@ -15,44 +15,43 @@ const port = 8000;
 const cors = require('cors');
 app.use(cors()); // Permet les requêtes cross-origin
 
-// Configuration du body-parser pour parser les données des requêtes HTTP
+// Configuration du body-parser pour analyser les données des requêtes HTTP
 
-// Middleware pour parser les requêtes avec des données URL-encodées (formulaires)
+// Middleware pour analyser les requêtes avec des données URL-encodées (formulaires)
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Middleware pour parser les requêtes avec des données JSON
+// Middleware pour analyser les requêtes avec des données JSON
 app.use(bodyParser.json());
 
 // Importation du module JSON Web Token pour gérer les authentifications
 const jwt = require('jsonwebtoken');
 
-
 // Connexion à la base de données MongoDB en utilisant mongoose
 mongoose.connect("mongodb+srv://ekwa:ekwa@cluster0.mvurd.mongodb.net/", {
-    useNewUrlParser: true, // Utilisation du nouvel analyseur d'URL MongoDB pour éviter les avertissements
-    useUnifiedTopology: true // Utilisation du nouveau moteur de gestion de connexions pour une meilleure gestion de la connexion
+  useNewUrlParser: true, // Utilisation du nouvel analyseur d'URL MongoDB pour éviter les avertissements
+  useUnifiedTopology: true // Utilisation du nouveau moteur de gestion de connexions pour une meilleure gestion de la connexion
 }).then(() => {
-    // Si la connexion réussit, afficher un message dans la console
-    console.log("connected to MongoDB");
+  // Si la connexion réussit, afficher un message dans la console
+  console.log("connected to MongoDB");
 }).catch((err) => {
-    // Si une erreur survient lors de la connexion à MongoDB, afficher un message d'erreur dans la console
-    console.log("error connecting to MongoDB");
+  // Si une erreur survient lors de la connexion à MongoDB, afficher un message d'erreur dans la console
+  console.log("error connecting to MongoDB");
 });
 
 // Démarrage du serveur Express et écoute sur le port spécifié
 app.listen(port, () => {
-    // Une fois le serveur démarré, afficher un message pour indiquer que le serveur fonctionne
-    console.log("server is running on port 8000");
+  // Une fois le serveur démarré, afficher un message pour indiquer que le serveur fonctionne
+  console.log("server is running on port 8000");
 });
 
 const User = require("./models/user");
 const Order = require("./models/order");
 
-//function to send verification email to the user
+// Fonction pour envoyer un email de vérification à l'utilisateur
 const sendVerificationEmail = async (email, verificationToken) => {
-  //create a nodemailer transporter
+  // Créer un transporteur nodemailer
   const transporter = nodemailer.createTransport({
-    //configure the email service
+    // Configurer le service de messagerie
     service: "gmail",
     auth: {
       user: "tempeteekwa1995@gmail.com",
@@ -60,46 +59,72 @@ const sendVerificationEmail = async (email, verificationToken) => {
     },
   });
 
-  //compose the email message
+  // Composer le message de l'email
   const mailOptions = {
     from: "amazon.com",
     to: email,
-    subject: "Email Verification",
-    text: `Please click the following link to verify your email : XXXXXXXXXXXXXXXXXXXXXXXXXXXXX${verificationToken}`,
+    subject: "Vérification de l'email",
+    text: `Veuillez cliquer sur le lien suivant pour vérifier votre email : http://localhost:8000/verify/${verificationToken}`,
   };
 
-  //send the email
+  // Envoyer l'email
   try {
     await transporter.sendMail(mailOptions);
   } catch (error) {
-    console.log("error sending email", error);
+    console.log("erreur lors de l'envoi de l'email de vérification", error);
   }
 };
 
-// endpoint to register in the app
+// Endpoint pour s'inscrire sur l'application
 app.post("/register", (req, res) => {
-   try {
-     const { name, email, password } = req.body;
+  try {
+    const { name, email, password } = req.body;
 
-     //Check if the email is already registered
-     const existingUser = await User.findOne({ email});
-     if (existingUser) {
-       return res.status(400).json({ message: "Email already registered" });
-     }
+    // Vérifier si l'email est déjà enregistré
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email déjà enregistré" });
+    }
 
-     //Create a new user
-     const newUser = new User({name,email,password});
+    // Créer un nouvel utilisateur
+    const newUser = new User({ name, email, password });
 
-     //Generate and store the verification token
-     newUser.verificationToken = crypto.randomBytes(20).toString("hex");
+    // Générer et stocker le token de vérification
+    newUser.verificationToken = crypto.randomBytes(20).toString("hex");
 
-     // Save the user to the database
-     await newUser.save();
+    // Sauvegarder l'utilisateur dans la base de données
+    await newUser.save();
 
-     //Send a verification email to the user
-     sendVerificationEmail(newUser.email, newUser.verificationToken);
-   } catch (error) {
-     console.log("error registering user", error);
-     res.status(500).json({ message: "Registration failed" });
-   } 
+    // Envoyer un email de vérification à l'utilisateur
+    sendVerificationEmail(newUser.email, newUser.verificationToken);
+  } catch (error) {
+    console.log("erreur lors de l'inscription de l'utilisateur", error);
+    res.status(500).json({ message: "Échec de l'inscription" });
+  }
 });
+
+// Endpoint pour vérifier l'email
+app.get("/verify/:token", async (req, res) => {
+  try {
+    const token  = req.params.token;
+
+    // Trouver l'utilisateur par le token de vérification
+    const user = await User.findOne({ verificationToken: token });
+
+    // Si l'utilisateur n'est pas trouvé, retourner un message d'erreur
+    if (!user) {
+      return res.status(400).json({ message: "Token de vérification invalide" });
+    }
+
+    // Mettre à jour le statut de l'utilisateur pour le marquer comme vérifié
+    user.verified = true;
+    await user.save();
+
+    // Envoyer un message de succès à l'utilisateur
+    res.json({ message: "Email vérifié avec succès" });
+  } catch (error) {
+    console.log("erreur lors de la vérification de l'email", error);
+    res.status(500).json({ message: "Échec de la vérification de l'email" });
+  }
+});
+
