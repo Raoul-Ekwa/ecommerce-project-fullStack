@@ -9,11 +9,13 @@ const nodemailer = require('nodemailer'); // Module pour envoyer des emails depu
 const app = express();
 
 // Définition du port sur lequel le serveur va écouter
-const port = 8000;
+const port = 8082;
 
 // Activation de CORS (Cross-Origin Resource Sharing) pour permettre les requêtes entre différents domaines
 const cors = require('cors');
 app.use(cors()); // Permet les requêtes cross-origin
+
+
 
 // Configuration du body-parser pour analyser les données des requêtes HTTP
 
@@ -64,7 +66,7 @@ const sendVerificationEmail = async (email, verificationToken) => {
     from: "amazon.com",
     to: email,
     subject: "Vérification de l'email",
-    text: `Veuillez cliquer sur le lien suivant pour vérifier votre email : http://localhost:8000/verify/${verificationToken}`,
+    text: `Veuillez cliquer sur le lien suivant pour vérifier votre email : http://localhost:8082/verify/${verificationToken}`,
   };
 
   // Envoyer l'email

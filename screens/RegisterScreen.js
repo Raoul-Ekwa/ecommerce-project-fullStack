@@ -22,7 +22,7 @@ const RegisterScreen = () => {
         }
     
         // Envoyer une requête POST à l'API backend
-        axios.post('http://localhost:8000/register', user)
+        axios.post('http://localhost:8082/register', user)
             .then(response => {
                 console.log(response);
                 Alert.alert(
