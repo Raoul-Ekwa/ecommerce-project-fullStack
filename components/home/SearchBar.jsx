@@ -47,17 +47,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: 5,
-    marginVertical: 5,
+    marginVertical: SIZES.small,
     backgroundColor: COLORS.secondary,
     borderRadius: SIZES.xSmall,
-    elevation: SHADOWS.small.elevation,
-    shadowColor: SHADOWS.small.shadowColor,
-    shadowOffset: SHADOWS.small.shadowOffset,
-    shadowOpacity: SHADOWS.small.shadowOpacity,
-    shadowRadius: SHADOWS.small.shadowRadius,
-    width: "80%", // Adapte la largeur en fonction de l'écran
-    marginHorizontal: SIZES.large,
-    //alignSelf: "center", // Centre le SearchBar horizontalement
+    ...SHADOWS.small,
+    width: "80%", 
+    marginHorizontal: 15
   },
   input: {
     width: "100%", // Le TextInput occupe toute la largeur du conteneur
@@ -73,13 +68,10 @@ const styles = StyleSheet.create({
     marginHorizontal: SIZES.xLarge + 2,
   },
   cameraIconContainer: {
-    backgroundColor: "darkgreen",
-    padding:12,
+   backgroundColor: "darkgreen",
+    padding: 12,
     borderRadius: SIZES.xSmall,
-    elevation: SHADOWS.small.elevation,
-    shadowColor: SHADOWS.small.shadowColor,
-    shadowOffset: SHADOWS.small.shadowOffset,
-    shadowOpacity: SHADOWS.small.shadowOpacity,
-    shadowRadius: SHADOWS.small.shadowRadius,
+    marginRight: 18,
+    ...SHADOWS.small 
   }
 });

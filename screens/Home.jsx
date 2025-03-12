@@ -6,6 +6,9 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { COLORS } from "../constants";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { Welcomme } from "../components";
+import Carousel from "../components/home/Carousel";
+import Headings from "../components/home/Headings";
+import ProductRow from "../components/products/ProductRow";
 
 const Home = () => {
   return (
@@ -29,7 +32,11 @@ const Home = () => {
       </View>
       <ScrollView>
          <Welcomme/>
+         <Carousel/>
+         <Headings/>
+         <ProductRow/>
       </ScrollView>
+      
     </SafeAreaView>
   );
 };

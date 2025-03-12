@@ -42,13 +42,14 @@ export default Search;
 
 const styles = StyleSheet.create({
   container: {
-     flexDirection: "row",
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
     marginRight: 10,
-    
+    marginLeft: 10,
+  
     
   },
   SearchBarContainer: {
@@ -60,14 +61,15 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.secondary,
     borderRadius: SIZES.xSmall,
     ...SHADOWS.small,
-    width: "70%", // Adapte la largeur en fonction de l'écran
-    marginHorizontal: SIZES.large,
+    width: "80%", 
+    marginHorizontal: 4
+
   },
   input: {
-    width: "100%", // Le TextInput occupe toute la largeur du conteneur
-    height: 40, // Hauteur fixe, mais tu peux la rendre dynamique si nécessaire
-    fontSize: SIZES.small, // Taille de la police dynamique en fonction de la largeur de l'écran
-    paddingLeft: 10, // Ajoute un peu d'espace à gauche
+    width: "100%", 
+    height: 40, 
+    fontSize: SIZES.small, 
+    paddingLeft: 10, 
   },
   inputContainer: {
     flexDirection: "row",
@@ -79,7 +81,8 @@ const styles = StyleSheet.create({
     backgroundColor: "darkgreen",
     padding: 12,
     borderRadius: SIZES.xSmall,
-    ...SHADOWS.small //appliquons tous les elements constitutifs de la constante SHADOWS
+    marginRight: 18,
+    ...SHADOWS.small 
   },
 });
 
