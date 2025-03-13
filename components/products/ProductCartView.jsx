@@ -15,7 +15,7 @@ const ProductCartView = () => {
             <View style={styles.imageContainer}>
             <Image
                 source={{
-                uri: "https://images.pexels.com/photos/3356416/pexels-photo-3356416.jpeg?auto=compress&cs=tinysrgb&h=350",
+                uri: "https://images.pexels.com/photos/1648776/pexels-photo-1648776.jpeg?auto=compress&cs=tinysrgb&h=350",
                 }}
                 style={styles.image}
             />

@@ -6,13 +6,13 @@ import ProductCartView from './ProductCartView'
 const ProductRow = () => {
       const products = [1, 2, 3, 4, 5]
   return (
-    <View style={{ marginTop: SIZES.medium }}>
+    <View style={styles.flatlistContainer}>
       <FlatList 
         data={products}
         renderItem={({ item }) => <ProductCartView />}
         horizontal
         keyExtractor={(item, index) => index.toString()}
-        showsHorizontalScrollIndicator={false} // Masque le curseur de défilement
+        showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: SIZES.medium }} // Espacement à gauche et à droite
         ItemSeparatorComponent={() => <View style={{ width: SIZES.medium }} />} // Espacement entre les items
       />
@@ -22,4 +22,9 @@ const ProductRow = () => {
 
 export default ProductRow
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  flatlistContainer : { 
+    marginTop: SIZES.medium,
+    marginLeft: 10
+ }
+})
